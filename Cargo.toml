@@ -1,0 +1,86 @@
+[package]
+name = "p1anet"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Async
+async-trait = { version = "0.1" }
+tokio = { version = "1.39", features = ["full"] }
+futures = { version = "^0.3" }
+futures-util = { version = "^0.3" }
+tower = { version = "0.5" }
+tower-http = { version = "0.6", features = ["cors", "fs", "trace"] }
+
+# Web
+axum = { version = "0.7", features = [
+    "ws",
+    "http2",
+    "multipart",
+    "macros",
+    "tower-log",
+    "tracing",
+    "json",
+] }
+axum-extra = { version = "0.9", features = [
+    "typed-header",
+    "query",
+    "multipart",
+    "typed-routing",
+    "async-read-body",
+] }
+mime = { version = "0.3" }
+mime_guess = { version = "2.0" }
+
+# Security
+rustls = { version = "0.23", features = ["ring"] }
+ring = { version = "0.17" }
+jsonwebtoken = { version = "9.3.0" }
+
+# Data Handling
+uuid = { version = "1.8", features = ["v4", "fast-rng", "macro-diagnostics"] }
+regex = { version = "1.10" }
+chrono = { version = "0.4" }
+toml = { version = "0.8" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = { version = "1.0" }
+serde_repr = { version = "0.1" }
+
+# Error Handling
+thiserror = { version = "1.0" }
+anyhow = { version = "1.0" }
+
+# Tracing
+tracing = { version = "0.1" }
+tracing-subscriber = { version = "0.3", features = [
+    "env-filter",
+    "std",
+    "json",
+] }
+tracing-appender = "0.2"
+tracing-error = { version = "0.2" }
+
+# Database
+sea-orm = { version = "1.1", features = [
+    "sqlx-postgres",
+    "debug-print",
+    "with-uuid",
+    "macros",
+    "with-json",
+    "runtime-tokio-rustls",
+] }
+sea-orm-migration = { version = "1.1" }
+
+# Miscellaneous
+once_cell = { version = "1.20" }
+reqwest = { version = "0.12", features = [
+    "json",
+    "rustls-tls",
+], default-features = false }
+utoipa = "5.1.1"
+utoipa-axum = "0.1.1"
+thirtyfour = "0.34.0"
+
+[[bin]]
+name = "p1anet"
+path = "src/main.rs"
