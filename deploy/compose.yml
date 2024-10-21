@@ -1,0 +1,26 @@
+version: "3.0"
+services:
+    core:
+        image: elabosak233/p1anet:main
+        restart: always
+        ports:
+            - "8887:8888"
+        volumes:
+            - "./application.toml:/app/application.toml:ro"
+            - "./logs:/app/logs"
+        depends_on:
+            - db
+
+    selenium:
+        image: selenium/standalone-chrome:latest
+        restart: always
+
+    db:
+        image: postgres:alpine
+        restart: always
+        environment:
+            POSTGRES_USER: p1anet
+            POSTGRES_PASSWORD: p1anet
+            POSTGRES_DB: p1anet
+        volumes:
+            - "./db:/var/lib/postgresql/data"

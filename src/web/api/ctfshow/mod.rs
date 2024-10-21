@@ -1,9 +1,7 @@
-use axum::{response::IntoResponse, Extension, Json};
+use axum::{response::IntoResponse, routing::get, Extension, Json, Router};
 use reqwest::StatusCode;
-use sea_orm::{
-    ActiveModelTrait, ColumnTrait, EntityTrait, ModelTrait, QueryFilter, QueryOrder, Set,
-};
-use utoipa_axum::{router::OpenApiRouter, routes};
+use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter, QueryOrder, Set};
+use utoipa::OpenApi;
 
 use crate::{
     database::get_db,
@@ -13,10 +11,14 @@ use crate::{
     },
 };
 
-pub fn router() -> OpenApiRouter {
-    return OpenApiRouter::new()
-        .routes(routes!(get_cookies))
-        .routes(routes!(get_status));
+#[derive(OpenApi)]
+#[openapi(paths(get_cookies, get_status))]
+pub struct Doc;
+
+pub fn router() -> Router {
+    return Router::new()
+        .route("/", get(get_cookies))
+        .route("/status", get(get_status));
 }
 
 #[utoipa::path(get, path = "")]

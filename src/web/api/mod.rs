@@ -1,15 +1,25 @@
 pub mod auth;
 pub mod ctfshow;
 
-use axum::{response::IntoResponse, Json};
+use axum::{response::IntoResponse, routing::get, Json, Router};
 use reqwest::StatusCode;
 use serde_json::json;
-use utoipa_axum::{router::OpenApiRouter, routes};
+use utoipa::OpenApi;
 
-pub async fn router() -> OpenApiRouter {
-    return OpenApiRouter::new()
-        .routes(routes!(index))
-        .routes(routes!(get_github_client_id))
+#[derive(OpenApi)]
+#[openapi(
+    paths(index, get_github_client_id),
+    nest(
+        (path = "/auth", api = auth::Doc),
+        (path = "/ctfshow", api = ctfshow::Doc)
+    ),
+)]
+pub struct Doc;
+
+pub async fn router() -> Router {
+    return Router::new()
+        .route("/", get(index))
+        .route("/github", get(get_github_client_id))
         .nest("/auth", auth::router())
         .nest("/ctfshow", ctfshow::router());
 }

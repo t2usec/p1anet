@@ -1,23 +1,28 @@
-pub mod docs;
+pub mod api;
 pub mod middleware;
 pub mod model;
-pub mod router;
 pub mod traits;
-
-use docs::ApiDoc;
-use utoipa::OpenApi;
-use utoipa_axum::router::OpenApiRouter;
 
 use std::sync::OnceLock;
 
-use axum::{middleware::from_fn, Router};
+use axum::{middleware::from_fn, Json, Router};
 use reqwest::Method;
 use tower_http::{
     cors::{Any, CorsLayer},
     trace::TraceLayer,
 };
+use utoipa::OpenApi;
 
 static APP: OnceLock<Router> = OnceLock::new();
+
+#[derive(OpenApi)]
+#[openapi(
+    info(title = "P1anet API", description = "OpenAPI docs for P1anet API."),
+    nest(
+        (path = "/api", api = api::Doc)
+    ),
+)]
+pub struct Doc;
 
 pub async fn init() {
     let cors = CorsLayer::new()
@@ -31,24 +36,21 @@ pub async fn init() {
         .allow_headers(Any)
         .allow_origin(Any);
 
-    let (app, api) = OpenApiRouter::with_openapi(ApiDoc::openapi())
+    let app = Router::new()
         .merge(
-            OpenApiRouter::new()
-                .nest("/api", router::router().await)
+            Router::new()
+                .nest("/api", api::router().await)
                 .layer(from_fn(middleware::auth::jwt))
                 .layer(TraceLayer::new_for_http()),
         )
         .layer(from_fn(middleware::frontend::serve))
         .layer(cors)
-        .split_for_parts();
+        .route(
+            "/openapi.json",
+            axum::routing::get(move || async move { Json(Doc::openapi()) }),
+        );
 
-    let x = api.clone().to_json().unwrap();
-
-    APP.set(app.route(
-        "/openapi.json",
-        axum::routing::get(move || async { return x }),
-    ))
-    .unwrap();
+    APP.set(app).unwrap();
 }
 
 pub fn get_app() -> Router {

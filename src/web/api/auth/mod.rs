@@ -1,31 +1,18 @@
 use crate::{database::get_db, util::jwt, web::traits::WebError};
-use axum::{
-    extract::Query,
-    response::{IntoResponse, Redirect},
-    Json,
-};
+use axum::{extract::Query, response::IntoResponse, routing::get, Json, Router};
 use reqwest::StatusCode;
 use sea_orm::{ActiveModelTrait, EntityTrait, Set};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use tracing::info;
-use utoipa_axum::{router::OpenApiRouter, routes};
+use utoipa::OpenApi;
 
-pub fn router() -> OpenApiRouter {
-    return OpenApiRouter::new()
-        .routes(routes!(signin))
-        .routes(routes!(callback));
-}
+#[derive(OpenApi)]
+#[openapi(paths(callback))]
+pub struct Doc;
 
-#[utoipa::path(get, path = "/signin")]
-pub async fn signin() -> Redirect {
-    let client_id = crate::config::get_config().auth.github.client_id.clone();
-
-    let url = format!(
-        "https://github.com/login/oauth/authorize?client_id={}&scope=user:email",
-        client_id,
-    );
-    return Redirect::to(&url);
+pub fn router() -> Router {
+    return Router::new().route("/callback", get(callback));
 }
 
 #[utoipa::path(get, path = "/callback")]

@@ -1,10 +1,7 @@
 mod migration;
 
 use once_cell::sync::OnceCell;
-use sea_orm::{
-    ActiveModelTrait, ConnectOptions, Database, DatabaseConnection, EntityTrait, PaginatorTrait,
-    Set,
-};
+use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use std::time::Duration;
 use tracing::info;
 
