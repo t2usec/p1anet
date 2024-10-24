@@ -1,4 +1,3 @@
-use crate::{database::get_db, web::traits::WebError};
 use axum::{
     body::Body,
     extract::Request,
@@ -11,7 +10,11 @@ use jsonwebtoken::{decode, DecodingKey, Validation};
 use sea_orm::EntityTrait;
 use serde_json::json;
 
-use crate::{util, web::traits::Ext};
+use crate::{
+    database::get_db,
+    util,
+    web::traits::{Ext, WebError},
+};
 
 pub async fn jwt(mut req: Request<Body>, next: Next) -> Result<Response, WebError> {
     let token = req

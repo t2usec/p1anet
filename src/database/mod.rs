@@ -1,8 +1,9 @@
 mod migration;
 
+use std::time::Duration;
+
 use once_cell::sync::OnceCell;
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
-use std::time::Duration;
 use tracing::info;
 
 static DB: OnceCell<DatabaseConnection> = OnceCell::new();

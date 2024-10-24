@@ -1,4 +1,3 @@
-use crate::{database::get_db, util::jwt, web::traits::WebError};
 use axum::{extract::Query, response::IntoResponse, routing::get, Json, Router};
 use reqwest::StatusCode;
 use sea_orm::{ActiveModelTrait, EntityTrait, Set};
@@ -6,6 +5,8 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use tracing::info;
 use utoipa::OpenApi;
+
+use crate::{database::get_db, util::jwt, web::traits::WebError};
 
 #[derive(OpenApi)]
 #[openapi(paths(callback))]

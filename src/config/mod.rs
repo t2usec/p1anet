@@ -4,8 +4,9 @@ pub mod ctfshow;
 pub mod db;
 pub mod selenium;
 
-use serde::{Deserialize, Serialize};
 use std::{path::Path, process, sync::OnceLock};
+
+use serde::{Deserialize, Serialize};
 use tokio::fs::{self};
 use tracing::error;
 
